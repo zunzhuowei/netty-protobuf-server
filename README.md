@@ -75,7 +75,7 @@ Caused by: java.net.SocketTimeoutException: connect timed out
 
 ## 自定义编码、解码器
 
-> 网络消息头 (魔法头short + 版本号byte + 长度int + 命令short)
+> 网络消息头 (魔法头short + 版本号byte + 包体长度int + 命令short)
 
 > 网络消息体  byte[] bytes;
 
@@ -352,14 +352,18 @@ import static com.game.qs.biz.CommandDefinition.USER_REQ_MSG_COMMAND;
 @EqualsAndHashCode(callSuper = true)
 @Data
 @Accessors(chain = true)
-@Command(cmd = LOGIN_REQ_MSG_COMMAND)
+@Command(cmd = LOGIN_REQ_MSG_COMMAND) // 绑定消息命令类型
 public class LoginReqMsg extends AbstractNetMessage {
     private String username;
     private String password;
     private String captcha;
 
+    /**
+    *  用于构建网络消息体
+    */
     @Override
     public NetMessage buildMsgBody() {
+        // 构建网络消息
         LoginModel.LoginReq.Builder builder = LoginModel.LoginReq.newBuilder();
         builder.setCaptcha(this.captcha).setUsername(this.username).setPassword(this.password);
         NetMessage netMessage = super.getNetMessage();
@@ -367,6 +371,9 @@ public class LoginReqMsg extends AbstractNetMessage {
         return netMessage;
     }
 
+    /**
+    *  解码网络消息
+    */
     @Override
     public AbstractNetMessage decodeMsg(NetMessage netMessage)
             throws InvalidProtocolBufferException {
@@ -395,8 +402,12 @@ import java.util.Objects;
 import static com.game.qs.biz.CommandDefinition.LOGIN_REQ_MSG_COMMAND;
 
 @Slf4j
-@Handler(cmd = LOGIN_REQ_MSG_COMMAND)
+@Handler(cmd = LOGIN_REQ_MSG_COMMAND) //绑定处理的消息类型
 public class LoginMsgHandler extends AbstractMsgHandler<LoginReqMsg> {
+    
+    /**
+    * 处理泛型的消息类型
+    */
     @Override
     public void handle(ChannelHandlerContext ctx, LoginReqMsg msg) {
         log.info("LoginMsgHandler from client id = {}", ctx.channel().id().asLongText());
