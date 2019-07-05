@@ -1,10 +1,82 @@
 ## netty-protobuf-server
-基于 `netty` 构建的 `tcp` 长连接服务端，采用 `google` `protoBuf` 高速编码为底层传输，
+基于 `springboot` 、`netty` 构建的 `tcp` 长连接服务端，采用 `google` `protoBuf` 高速编码为底层传输，
 并自定义编码、解码器。实现客户端的断线重连，服务端的心跳检测，接入 `mongodb` 作为储存（目前只是 demo）。
+
+## 快速启动
+1. 克隆代码到本地
+
+2. 找到 `springboot` 启动类 `com.game.qs.TcpServerApp`，执行 `main` 方法
+
+3. 找到测试客户端 `com.game.qs.gateway.client.Client`，执行 `main` 方法
+
+服务端控制台:
+
+```html
+2019-07-05 11:33:18.328  INFO 8748 --- [  boss-thread-0] io.netty.handler.logging.LoggingHandler  : [id: 0x3bb682e5, L:/0:0:0:0:0:0:0:0:9989] READ: [id: 0xe9fee8d5, L:/127.0.0.1:9989 - R:/127.0.0.1:57125]
+2019-07-05 11:33:18.329  INFO 8748 --- [  boss-thread-0] io.netty.handler.logging.LoggingHandler  : [id: 0x3bb682e5, L:/0:0:0:0:0:0:0:0:9989] READ COMPLETE
+2019-07-05 11:33:18.439  INFO 8748 --- [  work-thread-0] com.game.qs.biz.handler.LoginMsgHandler  : LoginMsgHandler from client id = 704d7bfffe6fe8f2-0000222c-00000001-ad43ef4134623175-e9fee8d5
+LoginMsgHandler = LoginReqMsg(username=username, password=password, captcha=验证码),cmd:5
+personMsg = PersonMsg(id=0, name=haah, email=asdfdffdasfads),cmd:1
+2019-07-05 11:33:21.414  INFO 8748 --- [  work-thread-0] c.g.qs.biz.handler.HeartBeatMsgHandler   : heartBeat from client id = 704d7bfffe6fe8f2-0000222c-00000001-ad43ef4134623175-e9fee8d5
+2019-07-05 11:33:21.415  INFO 8748 --- [  work-thread-0] c.g.qs.biz.handler.HeartBeatMsgHandler   : heartBeat = HeartBeatMsg(hit=0),cmd:4,onlineUser.lastVisit:1562297601
+2019-07-05 11:33:24.413  INFO 8748 --- [  work-thread-0] c.g.qs.biz.handler.HeartBeatMsgHandler   : heartBeat from client id = 704d7bfffe6fe8f2-0000222c-00000001-ad43ef4134623175-e9fee8d5
+2019-07-05 11:33:24.413  INFO 8748 --- [  work-thread-0] c.g.qs.biz.handler.HeartBeatMsgHandler   : heartBeat = HeartBeatMsg(hit=0),cmd:4,onlineUser.lastVisit:1562297604
+2019-07-05 11:33:27.413  INFO 8748 --- [  work-thread-0] c.g.qs.biz.handler.HeartBeatMsgHandler   : heartBeat from client id = 704d7bfffe6fe8f2-0000222c-00000001-ad43ef4134623175-e9fee8d5
+2019-07-05 11:33:27.414  INFO 8748 --- [  work-thread-0] c.g.qs.biz.handler.HeartBeatMsgHandler   : heartBeat = HeartBeatMsg(hit=0),cmd:4,onlineUser.lastVisit:1562297607
+2019-07-05 11:33:30.415  INFO 8748 --- [  work-thread-0] c.g.qs.biz.handler.HeartBeatMsgHandler   : heartBeat from client id = 704d7bfffe6fe8f2-0000222c-00000001-ad43ef4134623175-e9fee8d5
+2019-07-05 11:33:30.415  INFO 8748 --- [  work-thread-0] c.g.qs.biz.handler.HeartBeatMsgHandler   : heartBeat = HeartBeatMsg(hit=0),cmd:4,onlineUser.lastVisit:1562297610
+```
+
+客户端控制台:
+
+```html
+ClientHandler m = LoginReqMsg(username=username, password=password, captcha=验证码)
+ClientHandler m = PersonMsg(id=100, name=15164, email=hehe)
+ClientHandler m = HeartBeatMsg(hit=0)
+ClientHandler m = HeartBeatMsg(hit=0)
+ClientHandler m = HeartBeatMsg(hit=0)
+ClientHandler m = HeartBeatMsg(hit=0)
+ClientHandler m = HeartBeatMsg(hit=0)
+ClientHandler m = HeartBeatMsg(hit=0)
+ClientHandler m = HeartBeatMsg(hit=0)
+ClientHandler m = HeartBeatMsg(hit=0)
+ClientHandler m = HeartBeatMsg(hit=0)
+ClientHandler m = HeartBeatMsg(hit=0)
+ClientHandler m = HeartBeatMsg(hit=0)
+ClientHandler m = HeartBeatMsg(hit=0)
+ClientHandler m = HeartBeatMsg(hit=0)
+ClientHandler m = HeartBeatMsg(hit=0)
+ClientHandler m = HeartBeatMsg(hit=0)
+ClientHandler m = HeartBeatMsg(hit=0)
+```
+**特别注意：服务端会报如下异常，该异常为 `mongodb` 未配置所致，根据需要自行配置即可**
+
+```html
+2019-07-05 11:33:32.363  INFO 8748 --- [x.xxx.xxx:27017] org.mongodb.driver.cluster               : Exception in monitor thread while connecting to server xxx.xx.xxx.xxx:27017
+
+com.mongodb.MongoSocketOpenException: Exception opening socket
+	at com.mongodb.internal.connection.SocketStream.open(SocketStream.java:67) ~[mongodb-driver-core-3.8.2.jar:na]
+	at com.mongodb.internal.connection.InternalStreamConnection.open(InternalStreamConnection.java:126) ~[mongodb-driver-core-3.8.2.jar:na]
+	at com.mongodb.internal.connection.DefaultServerMonitor$ServerMonitorRunnable.run(DefaultServerMonitor.java:117) ~[mongodb-driver-core-3.8.2.jar:na]
+	at java.lang.Thread.run(Thread.java:748) [na:1.8.0_181]
+Caused by: java.net.SocketTimeoutException: connect timed out
+	at java.net.DualStackPlainSocketImpl.waitForConnect(Native Method) ~[na:1.8.0_181]
+	at java.net.DualStackPlainSocketImpl.socketConnect(DualStackPlainSocketImpl.java:85) ~[na:1.8.0_181]
+	at java.net.AbstractPlainSocketImpl.doConnect(AbstractPlainSocketImpl.java:350) ~[na:1.8.0_181]
+	at java.net.AbstractPlainSocketImpl.connectToAddress(AbstractPlainSocketImpl.java:206) ~[na:1.8.0_181]
+	at java.net.AbstractPlainSocketImpl.connect(AbstractPlainSocketImpl.java:188) ~[na:1.8.0_181]
+	at java.net.PlainSocketImpl.connect(PlainSocketImpl.java:172) ~[na:1.8.0_181]
+	at java.net.SocksSocketImpl.connect(SocksSocketImpl.java:392) ~[na:1.8.0_181]
+	at java.net.Socket.connect(Socket.java:589) ~[na:1.8.0_181]
+	at com.mongodb.internal.connection.SocketStreamHelper.initialize(SocketStreamHelper.java:64) ~[mongodb-driver-core-3.8.2.jar:na]
+	at com.mongodb.internal.connection.SocketStream.open(SocketStream.java:62) ~[mongodb-driver-core-3.8.2.jar:na]
+	... 3 common frames omitted
+```
 
 ## 自定义编码、解码器
 
 > 网络消息头 (魔法头short + 版本号byte + 长度int + 命令short)
+
 > 网络消息体  byte[] bytes;
 
 ```java
