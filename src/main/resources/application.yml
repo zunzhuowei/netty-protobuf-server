@@ -1,0 +1,23 @@
+spring:
+  profiles:
+    active: dev
+  application:
+    name: netty-protobuf-server
+  data:
+    mongodb:
+      host: xxx.xx.xxx.xxx
+      port: 27017
+      database: haha # 链接的数据库 (如果不存在自动会创建)
+      username: xxx  # 授权库用户名
+      password: xxxxx # 授权库密码
+      authentication-database: admin  # 数据库认证
+
+server:
+  port: 8080
+  servlet:
+    context-path: /
+
+netty:
+  server:
+    enable-client: true
+    tcp-port: 9989

@@ -1,0 +1,7 @@
+syntax = "proto3";
+option java_package = "com.game.qs.model.proto";
+option java_outer_classname = "HeartBeatModel";
+
+message HeartBeat {
+    int32 hit = 1;
+}

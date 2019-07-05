@@ -1,0 +1,15 @@
+syntax = "proto3";
+option java_package = "com.game.qs.model.proto";
+option java_outer_classname = "UserModel";
+
+message UserReq {
+    int32 id = 1;
+    string name = 2;
+    string email = 3;
+}
+
+message UserResp {
+    int32 err = 1;
+    string msg = 2;
+    string data = 3;
+}

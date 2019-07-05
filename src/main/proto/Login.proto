@@ -1,0 +1,15 @@
+syntax = "proto3";
+option java_package = "com.game.qs.model.proto";
+option java_outer_classname = "LoginModel";
+
+message LoginReq {
+    string username = 1; // 用户名
+    string password = 2; // 密码
+    string captcha = 3; // 验证码
+}
+
+message LoginResp {
+    int32 err = 1; // 错误码
+    string msg = 2; // 消息
+    string data = 3; // 数据
+}
