@@ -5,7 +5,7 @@ import lombok.experimental.Accessors;
 
 /**
  * Created by zun.wei on 2019/6/22.
- * 网络消息头 (魔法头short + 版本号byte + 长度int + 命令short)
+ * 网络消息头 (魔法头short + 版本号byte + 包体长度int + 命令short)
  */
 @Data
 @Accessors(chain = true)

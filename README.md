@@ -97,8 +97,10 @@ Caused by: java.net.SocketTimeoutException: connect timed out
  @Accessors(chain = true)
  public class NetMessage {
  
+     /** 消息头 **/
      private MsgHeader msgHeader;
  
+     /** 消息体 **/
      private MsgBody msgBody;
  
      /**
